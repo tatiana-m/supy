@@ -1,6 +1,10 @@
 from multiprocessing import Process,JoinableQueue
 import os,collections,array,math,subprocess,cPickle,traceback,sys,itertools,operator
 import ROOT as r
+try:
+    import numpy as np
+except:
+    pass
 #####################################
 hyphens="-"*115
 #####################################
@@ -476,3 +480,41 @@ def topologicalSort(paths) :
     assert not edges, "graph described by paths contains a cycle: no partial ordering possible.\n edges: %s"%str(edges)
     return ordered
 #####################################
+def justNameTitle(tkey) :
+    name,title = tkey.GetName(),tkey.GetTitle()
+    name = name.replace('-SLASH-','/')
+    L = len(title)
+    return ( (name,"") if name == title else
+             (name[:-L],title) if name[-L:] == title else
+             (name,title) )
+#####################################
+def optimizationContours(signal, backgd, left = True, right = True) :
+    stat = r.gStyle.GetOptStat()
+    r.gStyle.SetOptStat(0)
+    N = len(signal)
+    def h(name,scale="") : return r.TH2D(name,name+";lower;upper;"+scale,N,0,N,N,0,N)
+    eff,pur,signalb,ssqrtb,contour = (h('efficiency'),h('purity'),h("signalOverBackground"),h('signalOverSqrtBackground',"1e1"),h('contour'))
+
+    S = float(sum(signal))
+    for low,up in itertools.combinations(range(N),2) :
+        s = sum(signal[low:up])
+        b = sum(backgd[low:up])
+        eff.SetBinContent(low+1,up+1,s/S)
+        pur.SetBinContent(low+1,up+1,s/float(s+b))
+        if not b : continue
+        signalb.SetBinContent(low+1,up+1,min(10,s/float(b)))
+        ssqrtb.SetBinContent(low+1,up+1,s/math.sqrt(b))
+        
+    contour = signalb.Clone("contour")
+    contour.SetContour(2,np.array([4.4,9.9]))
+    signalb.SetContour(10,np.arange(0,10,1.0))
+    c = r.TCanvas()
+    c.Divide(2,2)
+    option = "cont4z"
+    option = "colz"
+    c.cd(1); eff.Draw(option) ; contour.Draw("cont3 same")
+    c.cd(2); pur.Draw(option) ; contour.Draw("cont3 same")
+    c.cd(3); signalb.Draw(option); contour.Draw("cont3 same")
+    c.cd(4); ssqrtb.Draw(option);  contour.Draw("cont3 same")
+    r.gStyle.SetOptStat(stat)
+    return [c,eff,pur,signalb,ssqrtb,contour]

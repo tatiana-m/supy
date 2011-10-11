@@ -2,6 +2,24 @@ import samples
 from core.configuration import srm
 photon = samples.SampleHolder()
 
+#L2L3Residual
+photon.add("Photon.Run2011A-May10ReReco-v1.AOD.Darren1", '%s/dburton/ICF/automated/2011_10_04_23_05_48/Photon.Run2011A-May10ReReco-v1.AOD")'%srm,
+           lumi = 1.0) #job 536, 1393/1414 completed
+photon.add("Photon.Run2011A-05Aug2011-v1.AOD.Bryn1",     '%s/bm409/ICF/automated/2011_09_29_15_37_16/Photon.Run2011A-05Aug2011-v1.AOD")'%srm,
+           lumi = 1.0) #job 528,  414/ 470 completed
+photon.add("Photon.Run2011A-PromptReco-v4.AOD.Bryn1",    '%s/bm409/ICF/automated/2011_10_04_17_23_30/Photon.Run2011A-PromptReco-v4.AOD")'%srm,
+           lumi = 1.0) #job 535, 1018/1636 completed
+photon.add("Photon.Run2011A-PromptReco-v6.AOD.Bryn1",    '%s/bm409/ICF/automated/2011_09_29_13_50_58/Photon.Run2011A-PromptReco-v6.AOD", alwaysUseLastAttempt = True)'%srm,
+           lumi = 1.0) #job 527,  384/ 647 completed
+photon.add("Photon.Run2011B-PromptReco-v1.AOD.Bryn1",    '%s/bm409/ICF/automated/2011_09_19_19_13_32/Photon.Run2011B-PromptReco-v1.AOD")'%srm,
+           lumi = 1.0) #job 515,  228/ 250 completed
+photon.add("Photon.Run2011B-PromptReco-v1.AOD.Bryn2",    '%s/bm409/ICF/automated/2011_09_26_16_02_44/Photon.Run2011B-PromptReco-v1.AOD")'%srm,
+           lumi = 1.0) #job 519,  259/ 260 completed
+photon.add("Photon.Run2011B-PromptReco-v1.AOD.Bryn3",    '%s/bm409/ICF/automated/2011_10_03_12_23_10/Photon.Run2011B-PromptReco-v1.AOD")'%srm,
+           lumi = 1.0) #job 531,  313/ 338 completed
+
+### EPS below ###
+
 #L1OffsetL2L3
 photon.add("Photon.Run2011A-May10ReReco-v1.AOD.Henning.L1", '%s/henning//ICF/automated/2011_06_10_17_00_01/")'%srm, lumi = 1.0)
 photon.add("Photon.Run2011A-PromptReco-v4.AOD.Ted1.L1", '%s/elaird//ICF/automated/2011_06_10_17_41_18/")'%srm, lumi = 1.0)
@@ -34,6 +52,9 @@ photon.add("Photon.Run2011A-PromptReco-v4.AOD.Rob2_skim", 'utils.fileListFromDis
 photon.add("Photon.Run2011A-PromptReco-v4.AOD.Rob3_skim",    'utils.fileListFromDisk(location = "%s/Photon.Run2011A-PromptReco-v4.AOD.Rob3_*_skim.root", isDirectory = False)'%dir, lumi = 1.000000e+00)
 photon.add("Photon.Run2011A-PromptReco-v4.AOD.Rob4_skim",    'utils.fileListFromDisk(location = "%s/Photon.Run2011A-PromptReco-v4.AOD.Rob4_*_skim.root", isDirectory = False)'%dir, lumi = 1.000000e+00)
 photon.add("Photon.Run2011A-PromptReco-v4.AOD.Darren1_skim", 'utils.fileListFromDisk(location = "%s/Photon.Run2011A-PromptReco-v4.AOD.Darren1_*_skim.root", isDirectory = False)'%dir, lumi = 1.000000e+00)
+
+dir = "/vols/cms02/elaird1/29_skims/04_photons/v4_80_gev_pt_twiki_loose"
+photon.add("Photon.Run2011A-PromptReco-v4.AOD.Rob4_80gev_skim", 'utils.fileListFromDisk(location = "%s/Photon.Run2011A-PromptReco-v4.AOD.Rob4_*_skim.root", isDirectory = False)'%dir, lumi = 1.000000e+00)
 
 #MC skims (L2L3)
 
