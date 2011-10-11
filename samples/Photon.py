@@ -47,6 +47,7 @@ photon.add("g_jets_mg_ht_40_100_skim",  'utils.fileListFromDisk(location = "%s/g
 photon.add("g_jets_mg_ht_100_200_skim", 'utils.fileListFromDisk(location = "%s/g_jets_mg_ht_100_200_*_skim.root", isDirectory = False)'%dir, xs = 3.710456e-02 * 4.414520e+03)
 photon.add("g_jets_mg_ht_200_inf_skim", 'utils.fileListFromDisk(location = "%s/g_jets_mg_ht_200_inf_*_skim.root", isDirectory = False)'%dir, xs = 8.309607e-02 * 6.159500e+02)
 
+
 #MG EWK/TT
 dir = "/vols/cms02/elaird1/29_skims/04_photons/v1"
 photon.add("dyll_jets_mg_noIsoReqSkim", 'utils.fileListFromDisk(location = "%s/dyll_jets_mg_*_skim.root", isDirectory = False)'%dir,xs = 5.224434e-04 * 3.048000e+03)
@@ -205,6 +206,11 @@ photon.add("v12_qcd_py6_pt300_phskim",       'utils.fileListFromDisk(location = 
 photon.add("v12_qcd_py6_pt80_phskim",        'utils.fileListFromDisk(location = "%s/v12_qcd_py6_pt80_*_skim.root", isDirectory = False)'%dir,       xs = 5.276427e-05 * 8.983300e+05)
 photon.add("w_jets_mg_v12_phskim",           'utils.fileListFromDisk(location = "%s/w_jets_mg_v12_*_skim.root", isDirectory = False)'%dir,          xs = 2.989590e-06 * 3.131400e+04)
 photon.add("z_jets_mg_v12_phskim",           'utils.fileListFromDisk(location = "%s/z_jets_mg_v12_*_skim.root", isDirectory = False)'%dir,          xs = 1.106071e-05 * 3.048000e+03)
+
+
+# skims with photon pT>80 GeV.
+dir = "/vols/cms02/elaird1/29_skims/04_photons/v4_80_gev_pt_twiki_loose"
+photon.add("Photon.Run2011A-PromptReco-v4.AOD.Rob4_80gev_skim", 'utils.fileListFromDisk(location = "%s/Photon.Run2011A-PromptReco-v4.AOD.Rob4_*_skim.root", isDirectory = False)'%dir, lumi = 1.000000e+00)
 
 #V5 example
 #----------------------------------------------------------------------------------------------

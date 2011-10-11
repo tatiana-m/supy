@@ -9,18 +9,25 @@ class trigger_ex_90gev(analysis.analysis) :
         return [samples.Photon.photon]
 
     def listOfSteps(self,config) :
-        tags = ["HLT_Photon90_CaloIdVL_v%d"%i for i in range(1,4)] + ["HLT_Photon90_CaloIdVL_IsoL_v%d"%i for i in range(1,4)]
-               #["HLT_Photon125_v%d"%i for i in range(1,3)] +
-        probe = "HLT_Photon135_v1"
+        tags90 = ["HLT_Photon90_CaloIdVL_v%d"%i for i in range(1,4)] + ["HLT_Photon90_CaloIdVL_IsoL_v%d"%i for i in range(1,4)]
+        tags90 = ["HLT_Photon90_CaloIdVL_v%d"%i for i in range(1,4)] + ["HLT_Photon90_CaloIdVL_IsoL_v%d"%i for i in range(1,4)]
 
+        tags75 = ["HLT_Photon75_CaloIdVL_v%d"%i for i in range(1,7)] + ["HLT_Photon75_CaloIdVL_IsoL_v%d"%i for i in range(1,7)]
+
+
+               #["HLT_Photon125_v%d"%i for i in range(1,3)] +
+#        probe = "HLT_Photon135_v1"
+#        probe = "HLT_Photon90_CaloIdVL_v1"
+        probe = "HLT_Photon90_CaloIdVL_IsoL_v3"
 #        print(tag)
 
         outList=[
             steps.Print.progressPrinter(),
             steps.Other.histogrammer("run", 100, 0, 200000),
             steps.Other.histogrammer("photonLeadingPtPat", 100, 0, 200),
+ #           steps.Trigger.Counts(),
             steps.Other.multiplicityFilter("photonIndicesPat", nMin = 1),
-            steps.Trigger.hltTurnOnHistogrammer("photonLeadingPtPat", (100, 70, 200), probe, tags )
+            steps.Trigger.hltTurnOnHistogrammer("photonLeadingPtPat", (100, 70, 200), probe, tags75 )
 
             ]
         return outList
@@ -46,7 +53,8 @@ class trigger_ex_90gev(analysis.analysis) :
         #data += specify(names = "Photon.Run2011A-PromptReco-v4.AOD.Rob1_skim",    weights = jw, overrideLumi = 167.1)
         #data += specify(names = "Photon.Run2011A-PromptReco-v4.AOD.Rob2_skim",    weights = jw, overrideLumi = 119.7)
         #data += specify(names = "Photon.Run2011A-PromptReco-v4.AOD.Rob3_skim",    weights = jw, overrideLumi = 180.2)
-        data += specify(names = "Photon.Run2011A-PromptReco-v4.AOD.Rob4_skim",    weights = jw, overrideLumi =  69.3)
+        data += specify(names = "Photon.Run2011A-PromptReco-v4.AOD.Rob4_80gev_skim",    weights = jw, overrideLumi =  69.3)
+#        data += specify(names = "Photon.Run2011A-PromptReco-v4.AOD.Rob4_skim",    weights = jw, overrideLumi =  69.3)
 #        data += specify(names = "Photon.Run2011A-PromptReco-v4.AOD.Darren1_skim", weights = jw, overrideLumi =  36.3)
 
         return (data)
