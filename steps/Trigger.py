@@ -117,6 +117,7 @@ class lowestUnPrescaledTriggerHistogrammer(analysisStep) :
         if not hasattr(self,"listOfPaths") :
             self.listOfPaths = dict.__getitem__(eventVars,self.key).sortedListOfPaths
             self.nPaths = len(self.listOfPaths)
+        assert eventVars[self.key]
         i = self.listOfPaths.index(eventVars[self.key])
         self.book.fill( i, self.key, self.nPaths, 0.0, self.nPaths, title = ";lowest un-prescaled path;events / bin", xAxisLabels = self.listOfPaths)
 #####################################

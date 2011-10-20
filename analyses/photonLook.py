@@ -28,7 +28,7 @@ class photonLook(analysis.analysis) :
                                                        ("photonIsoSideband","photonIDIsoSideBandPat"),          #7
                                                        ("photonNoIsoReq","photonIDNoIsoReqPat"),                #8
                                                        ("photonAN-10-268",   "photonIDAnalysisNote_10_268Pat")]  [2:3] )),
-                 "zMode" :            self.vary(dict([ ("Z",True), ("g",False) ]                                  [1:] )),
+                 "zMode" :            self.vary(dict([ ("Z",True), ("g",False) ]                                  [:] )),
                  "vertexMode" :       self.vary(dict([ ("vertexMode",True), ("",False) ]                         [1:2] )),
                  "subdet" :           self.vary(dict([ ("barrel", (0.0, 1.444)), ("endcap", (1.566, 2.5)) ]      [:1 ] )),
                  "jetId" :  ["JetIDloose","JetIDtight"]            [0],
@@ -47,12 +47,12 @@ class photonLook(analysis.analysis) :
                  #"triggerList" : ("HLT_HT100U","HLT_HT100U_v3","HLT_HT120U","HLT_HT140U","HLT_HT150U_v3"), #2010
                  "triggerList": tuple(#["HLT_Photon50_CaloIdVL_v%d"%i for i in range(1,3)] +
                                       #["HLT_Photon50_CaloIdVL_IsoL_v%d"%i for i in range(1,5)]+
-                                      ["HLT_Photon75_CaloIdVL_v%d"%i for i in range(1,7)]+
-                                      ["HLT_Photon75_CaloIdVL_IsoL_v%d"%i for i in range(1,7)]+
-                                      ["HLT_Photon90_CaloIdVL_v%d"%i for i in range(1,4)]+
-                                      ["HLT_Photon90_CaloIdVL_IsoL_v%d"%i for i in range(1,4)]
-                                      #["HLT_Photon125_v%d"%i for i in range(1,3)] +
-                                      #["HLT_Photon135_v%d"%i for i in range(1,2)]+
+                                      ["HLT_Photon75_CaloIdVL_v%d"%i for i in range(1,8)]+
+                                      ["HLT_Photon75_CaloIdVL_IsoL_v%d"%i for i in range(1,9)]+
+                                      ["HLT_Photon90_CaloIdVL_v%d"%i for i in range(1,5)]+
+                                      ["HLT_Photon90_CaloIdVL_IsoL_v%d"%i for i in range(1,6)]+
+                                      ["HLT_Photon125_v%d"%i for i in range(1,3)] +
+                                      ["HLT_Photon135_v%d"%i for i in range(1,3)]
                                       ),#2011 epoch 1
                  }
 
@@ -390,13 +390,13 @@ class photonLook(analysis.analysis) :
         jwAug = calculables.Other.jsonWeight("cert/Cert_170249-172619_7TeV_ReReco5Aug_Collisions11_JSON_v2.txt")
 
         data = []
-    #    data += specify(names = "Photon.Run2011A-May10ReReco-v1.AOD.Darren1", weights = jwMay,    overrideLumi = 202.7)
-        data += specify(names = "Photon.Run2011A-05Aug2011-v1.AOD.Bryn1",     weights = jwAug,    overrideLumi = 318.5)
-    #    data += specify(names = "Photon.Run2011A-PromptReco-v4.AOD.Bryn1",    weights = jwPrompt, overrideLumi = 549.8)
-    #    data += specify(names = "Photon.Run2011A-PromptReco-v6.AOD.Bryn1",    weights = jwPrompt, overrideLumi = 382.6)
-    #    data += specify(names = "Photon.Run2011B-PromptReco-v1.AOD.Bryn1",    weights = jwPrompt, overrideLumi = 221.2)
-    #    data += specify(names = "Photon.Run2011B-PromptReco-v1.AOD.Bryn2",    weights = jwPrompt, overrideLumi = 280.5)
-    #    data += specify(names = "Photon.Run2011B-PromptReco-v1.AOD.Bryn3",    weights = jwPrompt, overrideLumi = 374.1)
+        data += specify(names = "Photon.Run2011A-May10ReReco-v1.AOD.Darren1", weights = jwMay,    overrideLumi = 202.7)
+        data += specify(names = "Photon.Run2011A-05Aug2011-v1.AOD.Bryn1",     weights = jwAug,    overrideLumi = 318.5)#, nFilesMax = 1)
+        data += specify(names = "Photon.Run2011A-PromptReco-v4.AOD.Bryn1",    weights = jwPrompt, overrideLumi = 549.8)
+        data += specify(names = "Photon.Run2011A-PromptReco-v6.AOD.Bryn1",    weights = jwPrompt, overrideLumi = 382.6)
+        data += specify(names = "Photon.Run2011B-PromptReco-v1.AOD.Bryn1",    weights = jwPrompt, overrideLumi = 221.2)
+        data += specify(names = "Photon.Run2011B-PromptReco-v1.AOD.Bryn2",    weights = jwPrompt, overrideLumi = 280.5)
+        data += specify(names = "Photon.Run2011B-PromptReco-v1.AOD.Bryn3",    weights = jwPrompt, overrideLumi = 374.1)
 
 
         eL = 20000.0
@@ -415,7 +415,7 @@ class photonLook(analysis.analysis) :
         ttbar_mg = specify(effectiveLumi = eL, color = r.kOrange, names = ["tt_tauola_mg_noIsoReqSkim"])
         zjets_mg = specify(effectiveLumi = eL, color = r.kYellow-3, names = ["dyll_jets_mg_noIsoReqSkim"])
         wjets_mg = specify(effectiveLumi = eL, color = 28, names = ["w_jets_mg_noIsoReqSkim"])
-        zinv_mg  = specify(effectiveLumi = eL, color = r.kMagenta, names = ["zinv_jets_mg"])
+        zinv_mg  = specify(effectiveLumi = eL, color = r.kMagenta, names = ["zinv_jets_mg_skim"])
 
         zinv_py6 = specify(effectiveLumi = eL, color = r.kMagenta, names = ["z_nunu"])
         
@@ -488,44 +488,45 @@ class photonLook(analysis.analysis) :
         #org.mergeSamples(targetSpec = {"name":"2010 Data", "color":r.kBlack, "markerStyle":20}, allWithPrefix = "Run2010")
 
 
-#    def concludeAll(self) :
-#        #super(photonLook,self).concludeAll()
-#
-#        for item in ["275","325","375"] :
-#            organizers = [self.organizer(conf) for conf in self.readyConfs if (item in conf["tag"])]
-#            for org in organizers :
-#                if "Z" in org.tag :
-#                    lumi = 1057.
-#                    org.scale(lumi)
-#                    print "WARNING: HARD-CODED LUMI FOR Z MODE! (%g)"%lumi
-#                else :
-#                    self.mergeSamples(org)
-#                    org.scale()
-#            melded = organizer.organizer.meld(organizers = organizers)
-#            self.makeStandardPlots(melded)
-#            #self.makeIndividualPlots(melded)
-#                                 
-    def conclude(self, conf) :
-        org = self.organizer(conf)
-        
-        ##for skimming only
-        #utils.printSkimResults(org)
-            
-        if "Z" in org.tag :
-            lumi = 1057.
-            org.scale(lumi)
-            print "WARNING: HARD-CODED LUMI FOR Z MODE! (%g)"%lumi
-        else :
-            self.mergeSamples(org)
-            org.scale()
-            
-        self.makeStandardPlots(org)
-        #self.makeIndividualPlots(org)
-        #self.makePurityPlots(org, tag)
-        #self.makeEfficiencyPlots(org, tag)
-        #self.makeNVertexWeights(org, tag)
-        #self.makeMultiModePlots(34.7255)
+    def concludeAll(self) :
+        #super(photonLook,self).concludeAll()
 
+        for item in ["275","325","375"][-1:]:
+            organizers = [self.organizer(conf) for conf in self.readyConfs if (item in conf["tag"])]
+            for org in organizers :
+                if "Z" in org.tag :
+                    lumi = 2329.4
+#1057.
+                    org.scale(lumi)
+                    print "WARNING: HARD-CODED LUMI FOR Z MODE! (%g)"%lumi
+                else :
+                    self.mergeSamples(org)
+                    org.scale()
+            melded = organizer.organizer.meld(organizers = organizers)
+            self.makeStandardPlots(melded)
+            #self.makeIndividualPlots(melded)
+#                                 
+#    def conclude(self, conf) :
+#        org = self.organizer(conf)
+#        
+#        ##for skimming only
+#        #utils.printSkimResults(org)
+#            
+#        if "Z" in org.tag :
+#            lumi = 1057.
+#            org.scale(lumi)
+#            print "WARNING: HARD-CODED LUMI FOR Z MODE! (%g)"%lumi
+#        else :
+#            self.mergeSamples(org)
+#            org.scale()
+#            
+#        self.makeStandardPlots(org)
+#        #self.makeIndividualPlots(org)
+#        #self.makePurityPlots(org, tag)
+#        #self.makeEfficiencyPlots(org, tag)
+#        #self.makeNVertexWeights(org, tag)
+#        #self.makeMultiModePlots(34.7255)
+#
     def makeStandardPlots(self, org) :
         names = [ss["name"] for ss in org.samples]
         samplesForRatios = filter(lambda x: x[0] in names and x[1] in names,
