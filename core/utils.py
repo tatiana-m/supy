@@ -341,11 +341,11 @@ def partialSumP4Centroid(partials) :
     Cy = oneOverSixA * sum([ (p[i].y()+p[i+1].y())*(p[i].x()*p[i+1].y() - p[i+1].x()*p[i].y()) for i in range(len(partials))])
     return LorentzV(Cx,Cy,0,0)
 #####################################
-def dependence(TH2, name="", minimum=-1.5, maximum=1.5) :
+def dependence(TH2, name="", minimum=-5, maximum=5, inSigma = True) :
     if not TH2: return None
-    TH2.GetDirectory().cd()
+    if TH2.GetDirectory() : TH2.GetDirectory().cd()
     dep = TH2.Clone(name if name else TH2.GetName()+"_dependence")
-    dep.GetZaxis().SetTitle("dependence")
+    dep.SetZTitle("dependence")
     norm = TH2.Integral()
     projX = TH2.ProjectionX()
     projY = TH2.ProjectionY()
@@ -355,8 +355,14 @@ def dependence(TH2, name="", minimum=-1.5, maximum=1.5) :
             Y = projY.GetBinContent(iY)
             bin = TH2.GetBin(iX,iY)
             XY = TH2.GetBinContent(bin)
-            dep.SetBinContent(bin, min(maximum,max(minimum,math.log(norm*XY/X/Y))) if XY else 0)
-            dep.SetBinError(bin,0) 
+            dBin = math.log(norm*XY/X/Y) if XY else 0
+            eX = projX.GetBinError(iX)
+            eY = projX.GetBinError(iY)
+            eXY = TH2.GetBinError(bin)
+            eBin = math.sqrt((eXY/XY)**2 + (eX/X)**2 + (eY/Y)**2) if XY else 1# faulty assumption of independent errors
+            #dep.SetBinContent(bin, min(maximum,max(minimum,math.log(norm*XY/X/Y)/(eBin if eBin and inSigma else 1))) if XY else 0)
+            dep.SetBinContent(bin, min(maximum,max(minimum,dBin/(eBin if eBin and inSigma else 1))) if XY else 0)
+            dep.SetBinError(bin,0)
     dep.SetMinimum(minimum)
     dep.SetMaximum(maximum)
     
@@ -518,3 +524,16 @@ def optimizationContours(signal, backgd, left = True, right = True) :
     c.cd(4); ssqrtb.Draw(option);  contour.Draw("cont3 same")
     r.gStyle.SetOptStat(stat)
     return [c,eff,pur,signalb,ssqrtb,contour]
+#####################################
+def rHist(name,bins,edges,poissonErrors=False) :
+    hist = r.TH1D(name,"",len(bins), np.array(edges,dtype='double'))
+    for i,bin in enumerate(bins) : 
+        hist.SetBinContent(i+1,bin)
+        hist.SetBinError(i+1,math.sqrt(bin) if poissonErrors else 0)
+    return hist
+#####################################
+def tCanvasPrintPdf(canvas, fileName) :
+    canvas.Print("%s.eps"%fileName)
+    os.system("epstopdf %s.eps"%fileName)
+    os.system("rm %s.eps"%fileName)
+    

@@ -18,6 +18,7 @@ class topAsymm(topAsymmShell.topAsymmShell) :
     def listOfCalculables(self, pars) :
         calcs = super(topAsymm,self).listOfCalculables(pars)
         calcs.append( calculables.Other.TriDiscriminant(LR = "DiscriminantWQCD", LC = "DiscriminantTopW", RC = "DiscriminantTopQCD") )
+        calcs.append( calculables.size("%sIndices%s"%pars['objects']['jet']))
         return calcs
     ########################################################################################
 
@@ -45,9 +46,21 @@ class topAsymm(topAsymmShell.topAsymmShell) :
             steps.Filter.multiplicity("TopReconstruction",min=1),
             steps.Histos.value("TopRatherThanWProbability",100,0,1),
             steps.Filter.label("selection complete"),
+            calculables.Other.Discriminant( fixes = ("","TopQqQg"),
+                                            left = {"pre":"qq", "tag":"top_muon_pf", "samples":['tt_tauola_fj.wNonQQbar.nvr']},
+                                            right = {"pre":"qg", "tag":"top_muon_pf", "samples":['tt_tauola_fj.wTopAsymP00.nvr']},
+                                            dists = {"fitTopPtOverSumPt" : (20,0,1),
+                                                     "fitTopCosThetaDaggerTT" : (40,-1,1),
+                                                     "fitTopSumP4AbsEta" : (21,0,7),
+                                                     "%sIndices%s.size"%obj["jet"] : (10,-0.5,9.5)
+                                                     },
+                                            correlations = True,
+                                            bins = 14),
+            #steps.Filter.stop(),#####################################
             calculables.Other.Discriminant( fixes = ("","TopW"),
                                             left = {"pre":"w_jets_fj_mg", "tag":"top_muon_pf", "samples":[]},
                                             right = {"pre":"tt_tauola_fj", "tag":"top_muon_pf", "samples": ['tt_tauola_fj.%s.nvr'%s for s in ['wNonQQbar','wTopAsymP00']]},
+                                            correlations = True,
                                             dists = {"%sKt%s"%obj["jet"] : (25,0,150),
                                                      "%sB0pt%s"%obj["jet"] : (30,0,300),
                                                      "%s3absEta%s"%obj["jet"] : (20,0,4),
@@ -60,6 +73,7 @@ class topAsymm(topAsymmShell.topAsymmShell) :
             calculables.Other.Discriminant( fixes = ("","TopQCD"),
                                             left = {"pre":"SingleMu", "tag":"QCD_muon_pf", "samples":[]},
                                             right = {"pre":"tt_tauola_fj", "tag":"top_muon_pf", "samples": ['tt_tauola_fj.%s.nvr'%s for s in ['wNonQQbar','wTopAsymP00']]},
+                                            correlations = True,
                                             dists = {"%sKt%s"%obj["jet"] : (25,0,150),
                                                      "%sB0pt%s"%obj["jet"] : (30,0,300),
                                                      "%s3absEta%s"%obj["jet"] : (20,0,4),
@@ -72,6 +86,7 @@ class topAsymm(topAsymmShell.topAsymmShell) :
             calculables.Other.Discriminant( fixes = ("","WQCD"),
                                             left = {"pre":"w_jets_fj_mg", "tag":"top_muon_pf", "samples":[]},
                                             right = {"pre":"SingleMu", "tag":"QCD_muon_pf", "samples":[]},
+                                            correlations = True,
                                             dists = {"%sB0pt%s"%obj["jet"] : (30,0,300),
                                                      "%sMt%s"%obj['muon']+"mixedSumP4" : (30,0,180),
                                                      "%sDeltaPhiB01%s"%obj["jet"] : (20,0,math.pi),
@@ -118,6 +133,7 @@ class topAsymm(topAsymmShell.topAsymmShell) :
             return (specify(names = "tt_tauola_fj", effectiveLumi = eL, color = r.kBlue, weights = ["wNonQQbar","nvr"]) +
                     sum( [specify(names = "tt_tauola_fj", effectiveLumi = eL, color = color, weights = [ calculables.Top.wTopAsym(asym), "nvr" ] )
                           for asym,color in [(0.0,r.kOrange), (-0.3,r.kGreen),(0.3,r.kRed),
+                                             (-0.6,r.kYellow),(0.6,r.kYellow),
                                              (-0.5,r.kYellow),(0.5,r.kYellow),
                                              (-0.4,r.kYellow),(0.4,r.kYellow),
                                              (-0.2,r.kYellow),(0.2,r.kYellow),
@@ -133,10 +149,15 @@ class topAsymm(topAsymmShell.topAsymmShell) :
     ########################################################################################
     def concludeAll(self) :
         self.rowcolors = [r.kBlack, r.kGray+3, r.kGray+2, r.kGray+1, r.kViolet+4]
-        super(topAsymm,self).concludeAll()
-        self.meldNorm()
-        self.meldWpartitions()
-        self.meldQCDpartitions()
+        #super(topAsymm,self).concludeAll()
+        #self.meldWpartitions()
+        #self.meldQCDpartitions()
+        self.meldScale()
+        for var in ['lHadtDeltaY',
+                    'leptonRelativeY',
+                    'ttbarBeta',
+                    'ttbarDeltaAbsY',
+                    'ttbarSignedDeltaY' ] : self.templateFit(var)
 
     def conclude(self,pars) :
         org = self.organizer(pars)
@@ -146,8 +167,9 @@ class topAsymm(topAsymmShell.topAsymmShell) :
         org.mergeSamples(targetSpec = {"name":"t#bar{t}.q#bar{q}.N30", "color":r.kRed}, sources = ["tt_tauola_fj.wTopAsymN30.nvr","tt_tauola_fj.wNonQQbar.nvr"][:1])
         org.mergeSamples(targetSpec = {"name":"t#bar{t}.q#bar{q}.P30", "color":r.kGreen}, sources = ["tt_tauola_fj.wTopAsymP30.nvr","tt_tauola_fj.wNonQQbar.nvr"][:1])
         org.mergeSamples(targetSpec = {"name":"standard_model", "color":r.kGreen+2}, sources = ["qcd_py6","t#bar{t}","w_jets_fj_mg.nvr"], keepSources = True)
+        for ss in filter(lambda ss: 'tt_tauola' in ss['name'],org.samples) : org.drop(ss['name'])
 
-        print "\n\nPrepare for barf...\n"; orgpdf = copy.deepcopy(org); print "\n...yuck!\n\n"
+        orgpdf = copy.deepcopy(org)
         orgpdf.scale( toPdf = True )
         org.scale( lumiToUseInAbsenceOfData = 1.1e3 )
 
@@ -162,7 +184,9 @@ class topAsymm(topAsymmShell.topAsymmShell) :
         
         plotter.plotter(org, psFileName = self.psFileName(org.tag+"_log"),  doLog = True, pegMinimum = 0.01, **kwargs ).plotAll()
         plotter.plotter(org, psFileName = self.psFileName(org.tag+"_nolog"), doLog = False, **kwargs ).plotAll()
+
         kwargs["samplesForRatios"] = ("","")
+        kwargs["dependence2D"] = True
         plotter.plotter(orgpdf, psFileName = self.psFileName(org.tag+"_pdf"), doLog = False, **kwargs ).plotAll()
 
     def meldWpartitions(self) :
@@ -205,53 +229,100 @@ class topAsymm(topAsymmShell.topAsymmShell) :
                              rowColors = self.rowcolors,
                              ).plotAll()
 
-    def meldNorm(self) :
-        meldSamples = {"top_muon_pf" : ["SingleMu","P00","NonQQbar","w_jets"],
+    def meldScale(self) :
+        meldSamples = {"top_muon_pf" : ["SingleMu","tt_tauola_fj","w_jets"],
                        #"Wlv_muon_pf" : ["w_jets"],
                        "QCD_muon_pf" : ["SingleMu"]}
-
+        
         organizers = [organizer.organizer(tag, [s for s in self.sampleSpecs(tag) if any(item in s['name'] for item in meldSamples[tag])])
                       for tag in [p['tag'] for p in self.readyConfs if p["tag"] in meldSamples]]
-        if len(organizers) < 2 : return
+        if len(organizers) < len(meldSamples) : return
         for org in organizers :
-            org.mergeSamples(targetSpec = {"name":"t#bar{t}", "color":r.kViolet}, sources=["tt_tauola_fj.wNonQQbar.nvr","tt_tauola_fj.wTopAsymP00.nvr"])
+            org.mergeSamples(targetSpec = {"name":"t#bar{t}", "color":r.kViolet}, sources=["tt_tauola_fj.wNonQQbar.nvr","tt_tauola_fj.wTopAsymP00.nvr"], keepSources = True)
             org.mergeSamples(targetSpec = {"name":"w_jets", "color":r.kRed}, allWithPrefix = "w_jets")
             org.mergeSamples(targetSpec = {"name":"Data 2011",
-                                           "color":r.kBlue if "qcd_" in org.tag else r.kBlack,
+                                           "color":r.kBlue if "QCD_" in org.tag else r.kBlack,
                                            "markerStyle":(20 if "top" in org.tag else 1)}, allWithPrefix="SingleMu")
-            
-        if True :
-            templates = [None]
-            dist = "TriDiscriminant"
-            for org in organizers :
-                before = next(org.indicesOfStep("label","selection complete"))
-                distTup = org.steps[next(iter(filter(lambda i: before<i, org.indicesOfStepsWithKey(dist))))][dist]
-                for ss,hist in zip(org.samples,distTup) :            
-                    contents = [hist.GetBinContent(i) for i in range(hist.GetNbinsX()+2)]
-                    if "top" in org.tag and ss["name"] is "Data 2011":  observed = contents
-                    elif ss["name"] is "t#bar{t}" : templates[0] = contents
-                    else : templates.append(contents)
-            from core import fractions
-            outDir = self.globalStem
-            cs = fractions.componentSolver(observed, templates, 1e4)
-            with open(outDir+"/measuredFractions.txt","w") as file : print >> file, cs
-            with open(outDir+'/templates.txt','w') as file : print >> file, cs.components
-            stuff = fractions.drawComponentSolver(cs)
-            stuff[0].Print(outDir+"/measuredFractions.eps")
-            os.system("epstopdf %s/measuredFractions.eps"%outDir)
-            os.system("rm %s/measuredFractions.eps"%outDir)
-            contours = utils.optimizationContours(cs.components[0], sum(cs.components[1:]), left=True, right=True)
-            contours[0].Print(outDir+"/contours.eps")
-            os.system("epstopdf %s/contours.eps"%outDir)
-            os.system("rm %s/contours.eps"%outDir)
+
+        self.orgMelded = organizer.organizer.meld(organizers = organizers)
+        dist = "TriDiscriminant"
+        before = next(self.orgMelded.indicesOfStep("label","selection complete"))
+        distTup = self.orgMelded.steps[next(iter(filter(lambda i: before<i, self.orgMelded.indicesOfStepsWithKey(dist))))][dist]
+
+        templateSamples = ['top.t#bar{t}','top.w_jets','QCD.Data 2011']
+        templates = [None] * len(templateSamples)
+        for ss,hist in zip(self.orgMelded.samples,distTup) :
+            contents = [hist.GetBinContent(i) for i in range(hist.GetNbinsX()+2)]
+            if ss['name'] == "top.Data 2011" :
+                observed = contents
+                nEventsObserved = sum(observed)
+            elif ss['name'] in templateSamples :
+                templates[templateSamples.index(ss['name'])] = contents
+            else : pass
         
-        for org in organizers : org.scale(toPdf=True)
-            
-        melded = organizer.organizer.meld(organizers = organizers)
+        from core.fractions import componentSolver,drawComponentSolver
+        cs = componentSolver(observed, templates, 1e4)
+        csCanvas = drawComponentSolver(cs)
+        contours = utils.optimizationContours(cs.components[0], sum(cs.components[1:]), left=True, right=True)
+        utils.tCanvasPrintPdf(csCanvas[0], "%s/measuredFractions"%self.globalStem)
+        utils.tCanvasPrintPdf(contours[0], "%s/contours"%self.globalStem)
+        with open(self.globalStem+"/measuredFractions.txt","w") as file : print >> file, cs
+        with open(self.globalStem+'/templates.txt','w') as file : print >> file, cs.components
+
+        fractions = dict(zip(templateSamples,cs.fractions))
+        
+        for iSample,ss in enumerate(self.orgMelded.samples) :
+            if ss['name'] in fractions : self.orgMelded.scaleOneRaw(iSample, fractions[ss['name']] * nEventsObserved / distTup[iSample].Integral(0,distTup[iSample].GetNbinsX()+1))
+        
+        melded = copy.deepcopy(self.orgMelded)
+        for ss in filter(lambda ss: 'tt_tauola_fj' in ss['name'], melded.samples) : melded.drop(ss['name'])
+        melded.mergeSamples(targetSpec = {"name":"S.M.", "color":r.kGreen+2}, sources = ['top.w_jets','top.t#bar{t}','QCD.Data 2011'], keepSources = True, force = True)
         pl = plotter.plotter(melded, psFileName = self.psFileName(melded.tag),
                              doLog = False,
                              blackList = ["lumiHisto","xsHisto","nJobsHisto"],
                              rowColors = self.rowcolors,
+                             samplesForRatios = ("top.Data 2011","S.M."),
+                             sampleLabelsForRatios = ('data','s.m.')
                              ).plotAll()
+    
 
-        
+
+    def templateFit(self, var, qqFrac = 0.15) :
+        if not hasattr(self,'orgMelded') : print 'orgMelded is not present!' ; return
+        from core import templateFit
+        import numpy as np
+
+        org = self.orgMelded
+        topQQs = [s['name'] for s in org.samples if 'wTopAsym' in s['name']]
+        asymm = [eval(name.replace("top.tt_tauola_fj.wTopAsym","").replace(".nvr","").replace("P",".").replace("N","-.")) for name in topQQs]
+
+        def nparray(name, scaleToN = None) :
+            hist = distTup[ org.indexOfSampleWithName(name) ]
+            bins = np.array([hist.GetBinContent(j) for j in range(hist.GetNbinsX()+2)])
+            if scaleToN : bins *= (scaleToN / sum(bins))
+            return bins
+
+        outName = self.globalStem + '/templateFit_%s_%d'%(var,qqFrac*100)
+        canvas = r.TCanvas()
+        canvas.Print(outName+'.ps[')
+        for iStep in org.indicesOfStepsWithKey(var) :
+            distTup = org.steps[iStep][var]
+
+            nTT = sum(nparray('top.t#bar{t}'))
+            observed = nparray('top.Data 2011')
+            base = ( nparray('QCD.Data 2011') +
+                     nparray('top.w_jets') +
+                     nparray('top.tt_tauola_fj.wNonQQbar.nvr', scaleToN = (1-qqFrac) * nTT )
+                     )
+            templates = [base +  nparray(qqtt, qqFrac*nTT ) for qqtt in topQQs]
+
+            TF = templateFit.templateFitter(observed, templates, asymm)
+            print utils.roundString(TF.value, TF.error , noSci=True)
+            stuff = templateFit.drawTemplateFitter(TF, canvas)
+            canvas.Print(outName+'.ps')
+            #stuff[0].cd(3).SetLogy(1)
+            #stuff[0].Print(outName+'.ps')
+
+        canvas.Print(outName+'.ps]')
+        os.system('ps2pdf %s.ps %s.pdf'%(outName,outName))
+        os.system('rm %s.ps'%outName)

@@ -50,6 +50,12 @@ class PtOverSumPt(wrappedChain.calculable) :
         self.stash(['Pt','SumPt'])
     def update(self,_) : self.value = self.source[self.Pt] / self.source[self.SumPt]
 ######################################
+class SumP4AbsEta(wrappedChain.calculable) :
+    def __init__(self, collection = None) :
+        self.fixes = collection
+        self.stash(['SumP4'])
+    def update(self,_) : self.value = abs(self.source[self.SumP4].eta())
+######################################
 class BoostZ(wrappedChain.calculable) :
     def __init__(self, collection = None) :
         self.fixes = collection
@@ -218,6 +224,15 @@ class CosHelicityThetaQ(wrappedChain.calculable) :
         beta = top.BoostToCM()
         boost2 = r.Math.Boost(beta.x(), beta.y(), beta.z())
         self.value = r.Math.VectorUtil.CosTheta( top, boost2(boost1(p4['q'])))
+######################################
+class CosThetaDaggerTT(wrappedChain.calculable) :
+    def __init__(self, collection = None) :
+        self.fixes = collection
+        self.stash(['BoostZAlt','P4'])
+    def update(self,_) :
+        boost = self.source[self.BoostZAlt]
+        p4 = self.source[self.P4]
+        self.value = r.Math.VectorUtil.CosTheta(boost(p4['t']),boost(p4['tbar']))
 ######################################
 ######################################
 
