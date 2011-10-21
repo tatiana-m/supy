@@ -28,7 +28,7 @@ class photonLook(analysis.analysis) :
                                                        ("photonIsoSideband","photonIDIsoSideBandPat"),          #7
                                                        ("photonNoIsoReq","photonIDNoIsoReqPat"),                #8
                                                        ("photonAN-10-268",   "photonIDAnalysisNote_10_268Pat")]  [2:3] )),
-                 "zMode" :            self.vary(dict([ ("Z",True), ("g",False) ]                                  [:] )),
+                 "zMode" :            self.vary(dict([ ("Z",True), ("g",False) ]                                  [:1] )),
                  "vertexMode" :       self.vary(dict([ ("vertexMode",True), ("",False) ]                         [1:2] )),
                  "subdet" :           self.vary(dict([ ("barrel", (0.0, 1.444)), ("endcap", (1.566, 2.5)) ]      [:1 ] )),
                  "jetId" :  ["JetIDloose","JetIDtight"]            [0],
@@ -423,7 +423,7 @@ class photonLook(analysis.analysis) :
 #<<<<<<< HEAD
 #        zinv_mg  = specify(effectiveLumi = eL, color = r.kMagenta, names = ["zinv_jets_mg_skim"])
 #=======
-        zinv_mg  = specify(effectiveLumi = eL, color = r.kMagenta, names = self.zNunuMgNames(era = "summer11"), weights = phw)
+        zinv_mg  = specify(effectiveLumi = 300, color = r.kMagenta, names = self.zNunuMgNames(era = "summer11")[-1:], weights = phw)#, nFilesMax = 1)
 #>>>>>>> master
 
         zinv_py6 = specify(effectiveLumi = eL, color = r.kMagenta, names = ["z_nunu"])
