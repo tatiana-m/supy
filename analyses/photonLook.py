@@ -28,8 +28,8 @@ class photonLook(analysis.analysis) :
                                                        ("photonIsoSideband","photonIDIsoSideBandPat"),          #7
                                                        ("photonNoIsoReq","photonIDNoIsoReqPat"),                #8
                                                        ("photonAN-10-268",   "photonIDAnalysisNote_10_268Pat")]  [2:3] )),
-                 "zMode" :            self.vary(dict([ ("Z",True), ("g",False) ]                                  [:1] )),
-                 "vertexMode" :       self.vary(dict([ ("vertexMode",True), ("",False) ]                         [1:2] )),
+                 "zMode" :            self.vary(dict([ ("Z",True), ("g",False) ]                                  [1:] )),
+                 "vertexMode" :       self.vary(dict([ ("vertexMode",True), ("",False) ]                          [:1] )),
                  "subdet" :           self.vary(dict([ ("barrel", (0.0, 1.444)), ("endcap", (1.566, 2.5)) ]      [:1 ] )),
                  "jetId" :  ["JetIDloose","JetIDtight"]            [0],
                  "etRatherThanPt" : [True,False]                   [0],
@@ -48,9 +48,9 @@ class photonLook(analysis.analysis) :
                  "triggerList": tuple(#["HLT_Photon50_CaloIdVL_v%d"%i for i in range(1,3)] +
                                       #["HLT_Photon50_CaloIdVL_IsoL_v%d"%i for i in range(1,5)]+
                                       ["HLT_Photon75_CaloIdVL_v%d"%i for i in range(1,8)]+
-                                      ["HLT_Photon75_CaloIdVL_IsoL_v%d"%i for i in range(1,9)]+
+                                      ["HLT_Photon75_CaloIdVL_IsoL_v%d"%i for i in range(1,11)]+
                                       ["HLT_Photon90_CaloIdVL_v%d"%i for i in range(1,5)]+
-                                      ["HLT_Photon90_CaloIdVL_IsoL_v%d"%i for i in range(1,6)]+
+                                      ["HLT_Photon90_CaloIdVL_IsoL_v%d"%i for i in range(1,8)]+
                                       ["HLT_Photon125_v%d"%i for i in range(1,3)] +
                                       ["HLT_Photon135_v%d"%i for i in range(1,3)]
                                       ),#2011 epoch 1
@@ -139,7 +139,7 @@ class photonLook(analysis.analysis) :
 
         if params["vertexMode"] :
             outList += [
-                steps.Photon.photonPtSelector(_photon, 100.0, 0),
+                steps.Photon.photonPtSelector(_photon, 150.0, 0),
                 steps.Photon.photonEtaSelector(_photon, 1.45, 0),
                 steps.Other.passFilter("vertexDistribution1"),
                 steps.Other.histogrammer("vertexIndices", 20, -0.5, 19.5, title=";N vertices;events / bin", funcString="lambda x:len(x)"),                
@@ -178,7 +178,7 @@ class photonLook(analysis.analysis) :
                 #steps.Gen.photonEfficiencyPlots(label = "Status1Photon", ptCut = params["thresholds"]["genPhotonPtMin"],
                 #                                etaCut = 1.4, isoCut = 5.0, deltaRCut = 1.1, jets = _jet, photons = _photon),
 
-                steps.Filter.pt("%sP4%s"%_photon, min = 100.0, indices = "%sIndices%s"%_photon, index = 0),
+                steps.Filter.pt("%sP4%s"%_photon, min = 150.0, indices = "%sIndices%s"%_photon, index = 0),
                 steps.Filter.absEta("%sP4%s"%_photon, min = params["subdet"][0], max = params["subdet"][1], indices = "%sIndices%s"%_photon, index = 0),
                 steps.Filter.DeltaRGreaterSelector(jets = _jet, particles = _photon, minDeltaR = 1.0, particleIndex = 0),
                 
@@ -330,7 +330,8 @@ class photonLook(analysis.analysis) :
                 ]
 
     def qcdMgNames(self, era = "") :
-        l = ["100", "250", "500", "1000", "inf"]
+#        l = ["100", "250", "500", "1000", "inf"]
+        l = ["500", "1000", "inf"]
         return ["qcd_mg_ht_%s_%s_%s_skim"%(a, b, era) for a,b in zip(l[:-1], l[1:])]
 
     def gJetsMgNames(self, era = "") :
@@ -376,7 +377,7 @@ class photonLook(analysis.analysis) :
         g_jets_mg_2010 = specify(names = self.gJetsMgNames2010())
         zinv_mg_2010   = specify(names = ["z_inv_mg_v12_skim"], color = r.kMagenta+3)
 
-        ##2011 EPS
+        #2011 EPS
         #jw = calculables.Other.jsonWeight("cert/Cert_160404-167913_7TeV_PromptReco_Collisions11_JSON.txt") #1078/pb
         #data = []
         #data += specify(names = "Photon.Run2011A-May10ReReco-v1.AOD.Zoe_skim",    weights = jw, overrideLumi = 188.9)
@@ -390,24 +391,33 @@ class photonLook(analysis.analysis) :
         #data += specify(names = "Photon.Run2011A-PromptReco-v4.AOD.Darren1_skim", weights = jw, overrideLumi =  36.3)
 
         #2011
-        jwPrompt = calculables.Other.jsonWeight("cert/Cert_160404-177515_7TeV_PromptReco_Collisions11_JSON.txt")
-        jwMay = calculables.Other.jsonWeight("cert/Cert_160404-163869_7TeV_May10ReReco_Collisions11_JSON_v3.txt")
-        jwAug = calculables.Other.jsonWeight("cert/Cert_170249-172619_7TeV_ReReco5Aug_Collisions11_JSON_v2.txt")
+#        jwPrompt = calculables.Other.jsonWeight("cert/Cert_160404-177515_7TeV_PromptReco_Collisions11_JSON.txt")
+#        jwMay = calculables.Other.jsonWeight("cert/Cert_160404-163869_7TeV_May10ReReco_Collisions11_JSON_v3.txt")
+#        jwAug = calculables.Other.jsonWeight("cert/Cert_170249-172619_7TeV_ReReco5Aug_Collisions11_JSON_v2.txt")
 
         data = []
-        data += specify(names = "Photon.Run2011A-May10ReReco-v1.AOD.Darren1", weights = jwMay,    overrideLumi = 202.7)
-        data += specify(names = "Photon.Run2011A-05Aug2011-v1.AOD.Bryn1",     weights = jwAug,    overrideLumi = 318.5)#, nFilesMax = 1)
-        data += specify(names = "Photon.Run2011A-PromptReco-v4.AOD.Bryn1",    weights = jwPrompt, overrideLumi = 549.8)
-        data += specify(names = "Photon.Run2011A-PromptReco-v6.AOD.Bryn1",    weights = jwPrompt, overrideLumi = 382.6)
-        data += specify(names = "Photon.Run2011B-PromptReco-v1.AOD.Bryn1",    weights = jwPrompt, overrideLumi = 221.2)
-        data += specify(names = "Photon.Run2011B-PromptReco-v1.AOD.Bryn2",    weights = jwPrompt, overrideLumi = 280.5)
-        data += specify(names = "Photon.Run2011B-PromptReco-v1.AOD.Bryn3",    weights = jwPrompt, overrideLumi = 374.1)
+#        data += specify(names = "Photon.Run2011A-May10ReReco-v1.AOD.Darren1_skim", weights = jwMay,    overrideLumi = 202.7)
+#        data += specify(names = "Photon.Run2011A-05Aug2011-v1.AOD.Bryn1_skim",     weights = jwAug,    overrideLumi = 318.5)#, nFilesMax = 1)
+#        data += specify(names = "Photon.Run2011A-PromptReco-v4.AOD.Bryn1_skim",    weights = jwPrompt, overrideLumi = 549.8)
+#        data += specify(names = "Photon.Run2011A-PromptReco-v6.AOD.Bryn1_skim",    weights = jwPrompt, overrideLumi = 382.6)
+#        data += specify(names = "Photon.Run2011B-PromptReco-v1.AOD.Bryn1_skim",    weights = jwPrompt, overrideLumi = 221.2)
+#        data += specify(names = "Photon.Run2011B-PromptReco-v1.AOD.Bryn2_skim",    weights = jwPrompt, overrideLumi = 280.5)
+#        data += specify(names = "Photon.Run2011B-PromptReco-v1.AOD.Bryn3_skim",    weights = jwPrompt, overrideLumi = 374.1)
+
+
+        data += specify(names = "Photon.Run2011A-May10ReReco-v1.AOD.job662_skim",color = r.kBlack)
+        data += specify(names = "Photon.Run2011A-PromptReco-v4.AOD.job664_skim", color = r.kRed)
+        data += specify(names = "Photon.Run2011A-05Aug2011-v1.AOD.job663_skim",  color = r.kBlue)
+        data += specify(names = "Photon.Run2011A-PromptReco-v6.AOD.job667_skim", color = r.kGreen)
+        data += specify(names = "Photon.Run2011B-PromptReco-v1.AOD.job668_skim", color = r.kCyan)
 
 
         eL = 20000.0
+#30000.0
+
 
         phw = calculables.Photon.photonWeight(var = "vertexIndices")
-        
+#        ssw = calculables.Photon.summerToSpring(var = "vertexIndices")
         qcd_mg          = specify(effectiveLumi = eL, color = r.kBlue, names = self.qcdMgNames(era = "spring11"))
         g_jets_mg       = specify(effectiveLumi = eL, color = r.kGreen, names = self.gJetsMgNames(era = "summer11"))
 
@@ -423,7 +433,7 @@ class photonLook(analysis.analysis) :
 #<<<<<<< HEAD
 #        zinv_mg  = specify(effectiveLumi = eL, color = r.kMagenta, names = ["zinv_jets_mg_skim"])
 #=======
-        zinv_mg  = specify(effectiveLumi = 300, color = r.kMagenta, names = self.zNunuMgNames(era = "summer11")[-1:], weights = phw)#, nFilesMax = 1)
+        zinv_mg  = specify(effectiveLumi = eL, color = r.kMagenta, names = self.zNunuMgNames(era = "summer11")[-1:], weights = phw)#, nFilesMax = 1)
 #>>>>>>> master
 
         zinv_py6 = specify(effectiveLumi = eL, color = r.kMagenta, names = ["z_nunu"])
@@ -504,13 +514,16 @@ class photonLook(analysis.analysis) :
             organizers = [self.organizer(conf) for conf in self.readyConfs if (item in conf["tag"])]
             for org in organizers :
                 if "Z" in org.tag :
-                    lumi = 2329.4
-#1057.
+                    lumi = 4529.
+#                    lumi = 1057.
+    #2329.4
+
                     org.scale(lumi)
                     print "WARNING: HARD-CODED LUMI FOR Z MODE! (%g)"%lumi
                 else :
                     self.mergeSamples(org)
-                    org.scale()
+                    org.scale(4529)
+                    print "WARNING: HARD-CODED LUMI FOR g MODE!!!!"
             melded = organizer.organizer.meld(organizers = organizers)
             self.makeStandardPlots(melded)
             #self.makeIndividualPlots(melded)

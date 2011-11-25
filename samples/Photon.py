@@ -3,6 +3,28 @@ from core.configuration import srm
 photon = samples.SampleHolder()
 
 
+#L1FJL2L3Residual
+#these lumis are approximate
+a = "alwaysUseLastAttempt = True"
+photon.add("Photon.Run2011A-05Aug2011-v1.AOD.job663",  '%s/elaird/ICF/automated/2011_11_11_15_48_22/Photon.Run2011A-05Aug2011-v1.AOD")'%srm,            lumi =  356.7)
+photon.add("Photon.Run2011A-May10ReReco-v1.AOD.job662",'%s/henning/ICF/automated/2011_11_11_14_03_49/Photon.Run2011A-May10ReReco-v1.AOD")'%srm,         lumi =  199.8)
+photon.add("Photon.Run2011A-PromptReco-v4.AOD.job664", '%s/dburton/ICF/automated/2011_11_11_14_54_49/Photon.Run2011A-PromptReco-v4.AOD", %s)'%(srm,a),  lumi =  778.3)
+photon.add("Photon.Run2011A-PromptReco-v6.AOD.job667", '%s/bainbrid/ICF/automated/2011_11_15_18_44_33/")'%srm,                                          lumi =  625.5)
+photon.add("Photon.Run2011B-PromptReco-v1.AOD.job668", '%s/bm409//ICF/automated/2011_11_13_16_44_38/")'%srm,                                            lumi = 2568.9)
+
+#got one error when creating these skims:
+#Error in <TXNetFile::CreateXClient>: open attempt failed on root://gfe02.grid.hep.ph.ic.ac.uk/store/user/bainbrid/ICF/automated/2011_11_15_18_44_33/SusyCAF_Tree_109_1_H1a.root
+l = 'utils.fileListFromDisk(location = "/vols/cms02/elaird1/29_skims/04_photons/v7/'
+photon.add("Photon.Run2011A-05Aug2011-v1.AOD.job663_skim",   '%s/Photon.Run2011A-05Aug2011-v1.AOD.job663_*_skim.root",  isDirectory = False)'%l, lumi =  356.7)
+photon.add("Photon.Run2011A-May10ReReco-v1.AOD.job662_skim", '%s/Photon.Run2011A-May10ReReco-v1.AOD.job662_*_skim.root",isDirectory = False)'%l, lumi =  199.8)
+photon.add("Photon.Run2011A-PromptReco-v4.AOD.job664_skim",  '%s/Photon.Run2011A-PromptReco-v4.AOD.job664_*_skim.root", isDirectory = False)'%l, lumi =  778.3)
+photon.add("Photon.Run2011A-PromptReco-v6.AOD.job667_skim",  '%s/Photon.Run2011A-PromptReco-v6.AOD.job667_*_skim.root", isDirectory = False)'%l, lumi =  625.5)
+photon.add("Photon.Run2011B-PromptReco-v1.AOD.job668_skim",  '%s/Photon.Run2011B-PromptReco-v1.AOD.job668_*_skim.root", isDirectory = False)'%l, lumi = 2568.9)
+
+
+
+
+
 #L2L3Residual
 s = 'utils.fileListFromDisk(isDirectory = False, location = "/vols/cms02/elaird1/29_skims/04_photons/v5/'
 photon.add("Photon.Run2011A-May10ReReco-v1.AOD.Darren1_skim", '%s/Photon.Run2011A-May10ReReco-v1.AOD.Darren1_10_*_skim.root")'%s, lumi = 1.0)

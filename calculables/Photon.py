@@ -238,6 +238,35 @@ class photonWeight(wrappedChain.calculable) :
         #self.weight = {0:1.00047, 1:0.302948, 2:1.00326, 3:1.64012, 4:1.72804, 5:1.37661, 6:0.921953, 7:0.612364, 8:0.341528, 9:0.237224, 10:0.180099, 11:0.0957888, 12:0.0385848, 13:0.0785021, 14:0, 15:0, 16:0, 17:0, 18:0, 19:0}#determined on 2011-04-26 requiring a photon
         self.weight = collections.defaultdict(int)
         self.weight.update({0:1.00002, 1:0.246676, 2:0.784571, 3:1.34209, 4:1.49489, 5:1.45355, 6:1.10074, 7:0.90572, 8:0.595763, 9:0.514093, 10:0.469262, 11:0.451208, 12:0.59306, 13:0.459517, 14:0.467984, 15:0, 16:0, 17:0, 18:0, 19:0})#determined on 2011-06-14 requiring a photon
+
+        self.var = var
+    def update(self, ignored) :
+        self.value = self.weight[len(self.source[self.var])]
+####################################
+class summerToSpring(wrappedChain.calculable) :
+    def __init__(self, var = None) :
+        self.weight = collections.defaultdict(int)
+
+        d = {
+            0:0,
+            1:0.786453,
+            2:1.0597,
+            3:1.10787,
+            4:1.18155,
+            5:1.18918,
+            6:1.21106,
+            7:1.149,
+            8:0.940659,
+            9:0.793467,
+            10:0.568111,
+            11:0.321429,
+            12:0.103586,
+            } #determined on 2011-11-01 by comapring Summer '11 and Spring '11 MC with no cuts; Photon HT>200 sample
+        for i in range(13,20) :
+            d[i] = d[12]
+
+        self.weight.update(d)
+
         self.var = var
     def update(self, ignored) :
         self.value = self.weight[len(self.source[self.var])]

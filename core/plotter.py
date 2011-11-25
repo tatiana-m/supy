@@ -608,6 +608,11 @@ class plotter(object) :
             if numHisto and denomHisto and numHisto.GetEntries() and denomHisto.GetEntries() :
                 try:
                     ratio = utils.ratioHistogram(numHisto,denomHisto)
+                    #print "num: ",numHisto.GetName()
+                    #print "den: ",denHisto.GetName()
+                    #ratio.Print("all")
+                    #print
+                    #print
                     ratio.SetMinimum(0.0)
                     ratio.SetMaximum(2.0)
                     ratio.GetYaxis().SetTitle(numLabel+"/"+denomLabel)
